@@ -19,7 +19,7 @@ class Lexer:
         EOFed: Is the lexer parsed to an EOF.
     """
     def __init__(
-            self, condition:dict[re.Pattern, Callable[[Any], Token]],
+            self, condition:dict[re.Pattern, Callable[[Any, str], Token]],
             stream:io.TextIOBase, pos:Position=Position(0,0),
     ):
         self.__stream = stream # I hate pylint
@@ -37,7 +37,7 @@ class Lexer:
         while True:
             new_char = self.stream.read(1)
             if new_char == '':
-                retval = self.condition.get("<<EOF>>", lambda x:None)()
+                retval = self.condition.get("<<EOF>>", lambda x, y:None)()
                 if retval:
                     return retval
                 raise StopIteration
@@ -49,7 +49,7 @@ class Lexer:
             else:
                 if find:
                     self.stream.seek(self.stream.tell())
-                    retval = self.condition[find]
+                    retval = self.condition[find](self, parsing_string)
                     if retval:
                         return retval
     @property
