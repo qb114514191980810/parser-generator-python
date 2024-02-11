@@ -35,6 +35,7 @@ class Lexer:
         parsing_string = ""
         find = None
         while True:
+            prev_pos = self.stream.tell()
             new_char = self.stream.read(1)
             if new_char == '':
                 retval = self.condition.get("<<EOF>>", lambda x, y:None)()
@@ -53,7 +54,7 @@ class Lexer:
                     if retval:
                         return retval
     @property
-    def stream(self):
+    def stream(self) -> io.TextIOBase:
         """
         The current string of the lexer.
         """
