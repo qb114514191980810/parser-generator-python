@@ -41,6 +41,6 @@ class Token:
         type_: The token's type.
         value: The token's value.
     """
-    def __init__(self, type_: Enum, value: Any):
+    def __init__(self, type_: Enum, value: Any, start_position:Position, end_position:Position):
         self.type_ = type_
         self.value = value
