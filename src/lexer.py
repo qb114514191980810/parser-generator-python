@@ -6,7 +6,7 @@ from typing import Any, Callable
 import io
 import re
 
-from types_ import Position, Token
+from src.types_ import Position, Token
 
 class Lexer:
     """
@@ -30,33 +30,30 @@ class Lexer:
     def __iter__(self):
         return self
     def __next__(self) -> Token:
-        if self.eof_ed:
-            raise StopIteration
         parsing_string = ""
         find = None
-        while True:
+        while not self.eof_ed:
             prev_pos = self.stream.tell()
             new_char = self.stream.read(1)
             if new_char == '':
-                retval = self.condition.get("<<EOF>>", lambda x, y:None)()
-                if retval:
-                    return retval
-                raise StopIteration
+                new_char = '<<EOF>>'
+                self.eof_ed = True
             parsing_string += new_char
-            for i in self.condition.keys:
+            for i in self.condition.keys():
                 if re.fullmatch(i, parsing_string):
                     find=i
                     break
             else:
                 if find:
-                    self.stream.seek(self.stream.tell())
+                    self.stream.seek(prev_pos)
                     retval = self.condition[find](self, parsing_string)
                     if retval:
                         return retval
+        raise StopIteration
     @property
     def stream(self) -> io.TextIOBase:
         """
-        The current string of the lexer.
+        The current stream of the lexer.
         """
         return self.__stream
     @stream.setter
