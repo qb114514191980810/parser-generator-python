@@ -31,16 +31,17 @@ class Position:
         Note that it will also move the cursor to the start of the line."""
         self.row += 1
         self.column = 0
+    def __repr__(self):
+        return f"({self.row}, {self.column})"
+    def __eq__(self, other):
+        if not isinstance(other, Position):
+            return NotImplemented
+        return self.column == other.column and self.row == other.row
 
 @dataclass
 class Token:
-    """
-    Tokens generated from Lexer.
-
-    Attributes:
-        type_: The token's type.
-        value: The token's value.
-    """
-    def __init__(self, type_: Enum, value: Any, start_position:Position, end_position:Position):
-        self.type_ = type_
-        self.value = value
+    """Tokens generated from Lexer."""
+    type_: Enum
+    value: Any
+    start_position:Position
+    end_position:Position
